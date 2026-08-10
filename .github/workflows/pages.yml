@@ -27,8 +27,12 @@ jobs:
         env:
           API_URL: ${{ secrets.INTERVIEW_API_URL }}
         run: |
-          test -n "$API_URL"
-          printf 'window.INTERVIEW_API_URL = %s;\n' "$(node -p 'JSON.stringify(process.env.API_URL)')" > public/config.js
+          if [ -n "$API_URL" ]; then
+            printf 'window.INTERVIEW_API_URL = %s;\n' "$(node -p 'JSON.stringify(process.env.API_URL)')" > public/config.js
+          else
+            echo "INTERVIEW_API_URL is not configured yet; deploying the frontend without AI backend connection."
+            printf "window.INTERVIEW_API_URL = '';\n" > public/config.js
+          fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload site artifact
