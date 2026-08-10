@@ -51,15 +51,17 @@ function setupSpeechToText(mode, board) {
 
   const recognition = new SpeechRecognition();
   recognition.lang = 'he-IL';
-  recognition.continuous = false;
+  recognition.continuous = true;
   recognition.interimResults = true;
 
   let isListening = false;
+  let baseText = '';
 
   micBtn.addEventListener('click', () => {
     if (isListening) {
       recognition.stop();
     } else {
+      baseText = input.value ? input.value.trim() + ' ' : '';
       try {
         recognition.start();
       } catch (err) {
@@ -76,11 +78,16 @@ function setupSpeechToText(mode, board) {
   };
 
   recognition.onresult = (event) => {
-    let transcript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript;
+    let currentFinal = '';
+    let currentInterim = '';
+    for (let i = 0; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        currentFinal += event.results[i][0].transcript + ' ';
+      } else {
+        currentInterim += event.results[i][0].transcript;
+      }
     }
-    if (input) input.value = transcript;
+    if (input) input.value = baseText + currentFinal + currentInterim;
   };
 
   recognition.onerror = (event) => {
@@ -158,11 +165,16 @@ function setupFieldDictation(btnSelector, targetInputSelector) {
   };
 
   recognition.onresult = (event) => {
-    let transcript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript;
+    let currentFinal = '';
+    let currentInterim = '';
+    for (let i = 0; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        currentFinal += event.results[i][0].transcript + ' ';
+      } else {
+        currentInterim += event.results[i][0].transcript;
+      }
     }
-    target.value = baseText + transcript;
+    target.value = baseText + currentFinal + currentInterim;
   };
 
   recognition.onerror = (event) => {
