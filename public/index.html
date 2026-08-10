@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Orbit | מאמן הראיונות שלך</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="chat.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Interview Orbit">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span>INTERVIEW <b>ORBIT</b></span>
+      </a>
+      <div class="topbar-meta"><span class="live-dot"></span><span>AI COACH ONLINE</span><span class="divider"></span><span>SESSION 01</span></div>
+      <button class="icon-button" id="resetButton" title="איפוס סביבת העבודה" aria-label="איפוס"><span>↻</span></button>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div class="eyebrow"><span>01</span> הכנה ממוקדת לתפקיד</div>
+        <h1>הראיון הבא שלך<br><em>מתחיל כאן.</em></h1>
+        <p>הפוך/י את קורות החיים שלך לשיחה חכמה, מדויקת ובטוחה יותר.</p>
+      </section>
+
+      <section class="workspace-grid">
+        <div class="input-column">
+          <div class="section-label"><span class="label-number">A</span><span>הקשר הראיון</span><span class="label-line"></span><span class="label-status">נדרש</span></div>
+          <form id="analysisForm">
+            <label class="field-label" for="role">לאיזה תפקיד את/ה מתראיין/ת?</label>
+            <div class="role-input-wrap"><span class="field-icon">⌕</span><input id="role" name="role" required placeholder="למשל: Product Designer, Data Analyst..." autocomplete="off" /><span class="required-star">*</span></div>
+            <label class="field-label" for="jobDescription">הגדרת המשרה <span>(אופציונלי)</span></label>
+            <textarea id="jobDescription" name="jobDescription" rows="4" placeholder="הדבק/י כאן את תיאור התפקיד, הצוות או האתגרים..."></textarea>
+            <label class="brief-upload" for="jobFile"><span>＋</span><span id="jobFileTitle">או העלה/י הגדרת משרה כקובץ TXT / MD</span><input type="file" id="jobFile" accept=".txt,.md" /></label>
+
+            <div class="section-label resume-label"><span class="label-number">B</span><span>הסיפור שלך</span><span class="label-line"></span><span class="label-status">נדרש</span></div>
+            <label class="upload-zone" for="resumeFile" id="uploadZone">
+              <span class="upload-orbit"><span>↑</span></span>
+              <strong id="uploadTitle">העלאת קורות חיים</strong>
+              <span id="uploadHint">PDF, TXT או MD · עד 5MB</span>
+              <input type="file" id="resumeFile" accept=".txt,.md,.pdf" />
+            </label>
+            <div class="or-divider"><span>או הדבק/י טקסט ישירות</span></div>
+            <textarea id="resume" name="resume" required rows="8" placeholder="קורות חיים, ניסיון, פרויקטים, הישגים..."></textarea>
+
+            <div class="privacy-note"><span>◈</span><span>המידע נשאר בסשן המקומי שלך ונשלח רק לבקשת הניתוח.</span></div>
+            <button class="analyze-button" type="submit"><span>הפעל/י את המאמן</span><span class="button-arrow">←</span></button>
+          </form>
+        </div>
+
+        <div class="insight-column" aria-live="polite">
+          <div class="section-label"><span class="label-number">C</span><span>לוח התובנות</span><span class="label-line"></span><span class="label-status accent">GEMINI READY</span></div>
+          <div class="insight-board" id="insightBoard">
+            <div class="board-empty" id="emptyState">
+              <div class="radar"><span class="radar-ring ring-one"></span><span class="radar-ring ring-two"></span><span class="radar-sweep"></span><span class="radar-core"></span></div>
+              <p class="empty-kicker">YOUR SIGNAL IS WAITING</p>
+              <h2>בוא/י נבין מה<br><em>הסיפור שלך.</em></h2>
+              <p class="empty-copy">מלא/י את הפרטים משמאל.<br>המאמן ימצא את החיבורים החשובים.</p>
+              <div class="empty-tags"><span>התאמת תפקיד</span><span>שאלות חכמות</span><span>ניסוח תשובות</span></div>
+            </div>
+            <div class="loading-state hidden" id="loadingState"><div class="loading-pulse"></div><p>ממפה את הניסיון שלך לתפקיד...</p><span>GEMINI IS THINKING</span></div>
+            <div class="results hidden" id="results"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer><span>INTERVIEW ORBIT / LOCAL WORKSPACE</span><span>BUILT FOR THE MOMENT BEFORE “TELL ME ABOUT YOURSELF”</span></footer>
+  </div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
