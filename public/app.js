@@ -117,8 +117,76 @@ $('#newJobButton').addEventListener('click', () => showView('adminView'));
 $('#jobForm').addEventListener('submit', async event => { event.preventDefault(); try { const data = await request('/api/jobs', { method: 'POST', body: JSON.stringify({ title: $('#jobTitle').value, description: $('#jobDescription').value }) }); $('#jobMessage').textContent = `המשרה נשמרה. לינק מועמד: ${data.job.inviteUrl}`; event.target.reset(); await loadJobs($('#adminJobs')); } catch (error) { $('#jobMessage').textContent = error.message; } });
 $('#candidateForm').addEventListener('submit', event => { event.preventDefault(); const board = $('#candidateBoard'); board.innerHTML = '<div class="loading-state"><div class="loading-pulse"></div><p>מכין את הסימולציה...</p><span>INTERVIEWER IS THINKING</span></div>'; renderAnalysis({ headline: 'הסימולציה מוכנה', summary: 'המראיין יתחיל בשאלה הראשונה. ענה/י בכנות ובקצב שלך.', matchScore: 0, strengths: [], gaps: [], focus: [], questions: [], tips: [] }, board, 'candidate'); $('#candidateMessages').innerHTML = '<div class="chat-welcome">ספר/י לי בקצרה על עצמך ולמה התפקיד מעניין אותך.</div>'; });
 $('#recruiterForm').addEventListener('submit', async event => { event.preventDefault(); const board = $('#recruiterBoard'); board.innerHTML = '<div class="loading-state"><div class="loading-pulse"></div><p>מכין הערכת מועמד...</p><span>GEMINI IS THINKING</span></div>'; try { const data = await request('/api/analyze', { method: 'POST', body: JSON.stringify({ role: $('#recruiterRole').value, jobDescription: $('#recruiterDescription').value, resume: recruiterPdf ? '' : $('#recruiterResume').value, resumePdf: recruiterPdf }) }); renderAnalysis(data, board, 'recruiter'); } catch (error) { board.innerHTML = `<div class="board-empty"><p class="form-error">${error.message}</p></div>`; } });
+function setupFieldDictation(btnSelector, targetInputSelector) {
+  const btn = $(btnSelector);
+  const target = $(targetInputSelector);
+  if (!btn || !target) return;
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    btn.title = 'זיהוי דיבור אינו נתמך בדפדפן זה (מומלץ ב-Chrome / Edge)';
+    btn.style.opacity = '0.5';
+    btn.addEventListener('click', () => alert('זיהוי דיבור אינו נתמך בדפדפן זה. מומלץ להשתמש בדפדפן Chrome או Edge.'));
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'he-IL';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  let isListening = false;
+  let baseText = '';
+
+  btn.addEventListener('click', () => {
+    if (isListening) {
+      recognition.stop();
+    } else {
+      baseText = target.value ? target.value + ' ' : '';
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error('Dictation start error:', err);
+      }
+    }
+  });
+
+  recognition.onstart = () => {
+    isListening = true;
+    btn.classList.add('recording');
+    btn.textContent = '🛑 מקשיב... לחץ לסיום';
+  };
+
+  recognition.onresult = (event) => {
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    target.value = baseText + transcript;
+  };
+
+  recognition.onerror = (event) => {
+    console.warn('Dictation error:', event.error);
+    btn.textContent = '⚠️ שגיאה בהכתבה';
+    setTimeout(() => {
+      btn.textContent = '🎙️ הכתבה בקול';
+      btn.classList.remove('recording');
+    }, 2000);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎙️ הכתבה בקול';
+  };
+}
+
+setupFieldDictation('#adminDictateBtn', '#jobDescription');
+setupFieldDictation('#recruiterDictateBtn', '#recruiterDescription');
+
 function bindFile(input, target, onRead) { $(input).addEventListener('change', () => { try { setUpload($(input).files[0], target, onRead); } catch (error) { target.hint.textContent = error.message; } }); }
 bindFile('#candidateFile', { title: $('#candidateUploadTitle'), hint: $('#candidateUploadHint') }, (text, pdf) => { $('#candidateResume').value = text; candidatePdf = pdf; });
 bindFile('#recruiterFile', { title: $('#recruiterUploadTitle'), hint: $('#recruiterUploadHint') }, (text, pdf) => { $('#recruiterResume').value = text; recruiterPdf = pdf; });
 $('#createInviteButton').addEventListener('click', createInvite);
 const invite = new URLSearchParams(location.search).get('invite'); if (invite) loadInvite(invite); else showView('landingView');
+
