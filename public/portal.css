@@ -1,0 +1,361 @@
+/* ==========================================================================
+   Interview Orbit - Portal & Workflow Component Styling
+   ========================================================================== */
+
+.hidden {
+  display: none !important;
+}
+
+.candidate-only .brand {
+  pointer-events: none;
+  cursor: default;
+}
+
+.candidate-only .topbar-meta,
+.candidate-only footer {
+  display: none;
+}
+
+.landing-view {
+  padding-bottom: 30px;
+}
+
+/* Portal Selection Grid */
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 50px;
+}
+
+.portal-card {
+  position: relative;
+  min-height: 240px;
+  padding: 30px;
+  text-align: right;
+  border: 1px solid var(--border-light);
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.portal-card .card-glow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.15), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0.5;
+}
+
+.portal-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--accent-violet);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(167, 139, 250, 0.25);
+}
+
+.portal-card:hover .card-glow {
+  transform: scale(1.8);
+  opacity: 1;
+}
+
+.portal-card.candidate-choice {
+  border-color: rgba(167, 139, 250, 0.2);
+}
+
+.portal-card.candidate-choice:hover {
+  border-color: var(--accent-violet);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(167, 139, 250, 0.35);
+}
+
+.portal-card.recruiter-choice {
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.portal-card.recruiter-choice:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.35);
+}
+
+.portal-card.admin-choice {
+  border-color: rgba(251, 191, 36, 0.2);
+}
+
+.portal-card.admin-choice:hover {
+  border-color: var(--accent-amber);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(251, 191, 36, 0.35);
+}
+
+.portal-index {
+  font: 11px 'DM Mono', monospace;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+}
+
+.portal-card strong {
+  font-size: 26px;
+  font-weight: 800;
+  margin-top: auto;
+  color: var(--text-main);
+}
+
+.portal-card small {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-top: 10px;
+  max-width: 250px;
+}
+
+.portal-arrow {
+  font-size: 26px;
+  position: absolute;
+  bottom: 26px;
+  left: 30px;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.portal-card:hover .portal-arrow {
+  transform: translateX(-8px);
+  color: var(--accent-violet);
+}
+
+/* Auth Panel / Login */
+.workflow-view {
+  padding: 30px 0;
+}
+
+.auth-panel {
+  max-width: 540px;
+  padding: 44px;
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
+  margin-top: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--grad-main);
+}
+
+.auth-panel h2 {
+  font-size: 40px;
+  line-height: 1.15;
+  margin: 16px 0 28px;
+  font-weight: 800;
+}
+
+/* Candidate Job Banner */
+.job-banner {
+  border-right: 4px solid var(--accent-violet);
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  border-right: 4px solid var(--accent-violet);
+  padding: 24px 28px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-main);
+}
+
+.job-banner span {
+  font: 11px 'DM Mono', monospace;
+  color: var(--accent-cyan);
+  letter-spacing: 1.5px;
+}
+
+.job-banner strong {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 8px 0;
+  display: block;
+}
+
+.job-banner p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Recruiter Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 260px minmax(280px, 420px) minmax(340px, 1fr);
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.saved-jobs {
+  border-left: 1px solid var(--border-light);
+  padding-left: 20px;
+}
+
+.dash-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.dash-heading h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.small-button {
+  border: 1px solid var(--border-glow);
+  background: rgba(167, 139, 250, 0.1);
+  color: var(--accent-violet);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font: 700 12px 'Heebo', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.small-button:hover {
+  background: var(--grad-btn);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.saved-job {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  text-align: right;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: all 0.3s ease;
+}
+
+.saved-job:hover {
+  background: rgba(167, 139, 250, 0.08);
+  border-color: var(--accent-violet);
+  transform: translateX(-4px);
+}
+
+.saved-job.selected {
+  border-color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.saved-job strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.saved-job small {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 6px 0;
+}
+
+.saved-job span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font: 11px 'DM Mono', monospace;
+  color: var(--accent-cyan);
+}
+
+/* Admin Jobs List */
+.admin-jobs {
+  max-width: 800px;
+  margin-top: 30px;
+}
+
+.admin-jobs .saved-job {
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-blur);
+  padding: 20px;
+  margin-top: 12px;
+}
+
+.muted-copy {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.invite-button {
+  width: 100%;
+  margin: 16px 0 8px;
+  padding: 14px 18px;
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius-sm);
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--text-main);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 700 14px 'Heebo', sans-serif;
+  cursor: pointer;
+}
+
+.invite-button:hover:not(:disabled) {
+  background: var(--accent-cyan);
+  color: #07121d;
+}
+
+.invite-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.invite-message {
+  min-height: 24px;
+  margin: 0 0 16px;
+  color: var(--accent-cyan);
+  font-size: 13px;
+}
+
+.invite-message a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (max-width: 990px) {
+  .portal-grid,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .saved-jobs {
+    border-left: 0;
+    border-bottom: 1px solid var(--border-light);
+    padding: 0 0 20px;
+    margin-bottom: 20px;
+  }
+}

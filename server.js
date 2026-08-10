@@ -1,120 +1,47 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const dotenv = require('dotenv');
 
 dotenv.config();
-
 const publicDir = path.join(__dirname, 'public');
+const dataDir = path.join(__dirname, 'data');
+const jobsFile = path.join(dataDir, 'jobs.json');
 const port = Number(process.env.PORT || 3000);
 const model = process.env.GEMINI_MODEL || 'gemini-flash-latest';
 const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+const sessions = new Map();
+fs.mkdirSync(dataDir, { recursive: true });
+if (!fs.existsSync(jobsFile)) fs.writeFileSync(jobsFile, '[]', { mode: 0o600 });
 
-function sendJson(res, status, payload) {
-  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': allowedOrigin, 'Access-Control-Allow-Headers': 'Content-Type' });
-  res.end(JSON.stringify(payload));
-}
+function readJobs() { try { return JSON.parse(fs.readFileSync(jobsFile, 'utf8')); } catch { return []; } }
+function writeJobs(jobs) { fs.writeFileSync(jobsFile, JSON.stringify(jobs, null, 2), { mode: 0o600 }); }
+function sendJson(res, status, payload) { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': allowedOrigin, 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }); res.end(JSON.stringify(payload)); }
+function responseText(result) { const text = result.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('').trim(); if (text) return text; throw new Error('Gemini לא החזיר טקסט.'); }
+function parseJson(text) { const cleaned = text.replace(/^```(?:json)?\s*|\s*```$/gi, '').trim(); const start = cleaned.indexOf('{'); const end = cleaned.lastIndexOf('}'); if (start < 0 || end < start) throw new Error('Gemini החזיר תשובה שאינה בפורמט JSON.'); return JSON.parse(cleaned.slice(start, end + 1)); }
+function token() { return crypto.randomBytes(24).toString('hex'); }
+function body(req) { return new Promise((resolve, reject) => { let raw = ''; req.on('data', chunk => { raw += chunk; if (raw.length > 12_000_000) reject(new Error('הבקשה גדולה מדי.')); }); req.on('end', () => { try { resolve(JSON.parse(raw || '{}')); } catch { reject(new Error('בקשה לא תקינה.')); } }); req.on('error', reject); }); }
+function auth(req, roles = ['recruiter', 'admin']) { const value = req.headers.authorization || ''; const session = sessions.get(value.replace(/^Bearer\s+/i, '')); if (!session || !roles.includes(session.role)) throw new Error('נדרשת כניסה מורשית.'); return session; }
+function jobView(job) { return { id: job.id, title: job.title, description: job.description, createdAt: job.createdAt, inviteToken: job.inviteToken, inviteUrl: `${process.env.PUBLIC_URL || ''}/?invite=${job.inviteToken}` }; }
+async function gemini(parts, generationConfig = {}) { if (!process.env.GEMINI_API_KEY) throw new Error('חסר GEMINI_API_KEY.'); const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY }, body: JSON.stringify({ contents: [{ parts }], generationConfig }) }); if (!response.ok) throw new Error(`Gemini returned ${response.status}`); return response.json(); }
+function recruiterPrompt(data) { return `אתה יועץ גיוס. נתח את קורות החיים מול המשרה עבור מנהל מגייס, לא עבור המועמד. החזר JSON בלבד בעברית: {"matchScore":number,"headline":string,"summary":string,"strengths":string[],"gaps":string[],"focus":[string],"questions":[{"label":string,"question":string,"why":string,"answer":string}],"tips":string[]}. היה ענייני, ציין סיכונים ופערים, ואל תמציא עובדות.\nמשרה: ${data.role}\nהגדרת משרה: ${data.jobDescription || 'לא סופקה'}\nקורות חיים: ${data.resume || 'מצורף PDF'}`; }
+async function analyze(data) { const parts = [{ text: recruiterPrompt(data) }]; if (data.resumePdf) parts.push({ inlineData: { mimeType: 'application/pdf', data: data.resumePdf } }); return parseJson(responseText(await gemini(parts, { responseMimeType: 'application/json', temperature: 0.45 }))); }
+async function chat(data) { if (!data?.role || !data?.message) throw new Error('נדרש תפקיד והודעה.'); const prompt = data.mode === 'candidate' ? `אתה מראיין מקצועי בסימולציית ראיון לתפקיד ${data.role}. שאל שאלה אחת בכל פעם, המתן לתשובת המרואיין, ותן משוב קצר ומעשי בעברית. התבסס על המשרה ועל קורות החיים, אך אל תמציא עובדות.\nמשרה: ${data.jobDescription || ''}\nקורות חיים: ${data.resume || 'מצורף PDF'}\nהודעת המרואיין: ${data.message}` : `אתה מאמן גיוס. ענה בעברית בקצרה ובאופן מעשי למגייס לגבי המועמד לתפקיד ${data.role}.\nקורות חיים: ${data.resume || 'מצורף PDF'}\nשאלת המגייס: ${data.message}`; const parts = [{ text: prompt }]; if (data.resumePdf) parts.push({ inlineData: { mimeType: 'application/pdf', data: data.resumePdf } }); return { reply: responseText(await gemini(parts, { temperature: 0.55 })) }; }
+function serveStatic(req, res) { const requested = new URL(req.url, `http://${req.headers.host}`).pathname || '/'; const filePath = path.normalize(path.join(publicDir, requested === '/' ? '/index.html' : requested)); if (!filePath.startsWith(publicDir)) return sendJson(res, 403, { error: 'Forbidden' }); fs.readFile(filePath, (error, content) => { if (error) return sendJson(res, 404, { error: 'Not found' }); const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript' }; res.writeHead(200, { 'Content-Type': `${types[path.extname(filePath)] || 'text/plain'}; charset=utf-8` }); res.end(content); }); }
 
-function errorMessage(error, fallback) {
-  if (error?.cause?.code) return `${fallback} (${error.cause.code})`;
-  return error?.message || fallback;
-}
-
-function responseText(result) {
-  const text = result.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('').trim();
-  if (text) return text;
-  const reason = result.candidates?.[0]?.finishReason;
-  throw new Error(reason ? `Gemini סיים ללא טקסט (${reason})` : 'Gemini לא החזיר טקסט. נסה/י PDF קטן יותר או קובץ PDF עם טקסט חי.');
-}
-
-function parseJson(text) {
-  const cleaned = text.replace(/^```(?:json)?\s*|\s*```$/gi, '').trim();
-  const start = cleaned.indexOf('{');
-  const end = cleaned.lastIndexOf('}');
-  if (start < 0 || end < start) throw new Error('Gemini החזיר תשובה שאינה בפורמט JSON. נסה/י שוב.');
-  return JSON.parse(cleaned.slice(start, end + 1));
-}
-
-function ensureFocus(result) {
-  if (!Array.isArray(result.focus) || result.focus.length === 0) {
-    result.focus = [...(result.gaps || []), ...(result.tips || [])].slice(0, 5);
-  }
-  return result;
-}
-
-function promptFor(data) {
-  return `אתה מאמן ראיונות עבודה חד, אמפתי ומעשי. נתח את קורות החיים המצורפים מול התפקיד והחזר JSON בלבד בעברית.\nמבנה JSON מדויק: {"matchScore":number,"headline":string,"summary":string,"strengths":string[],"gaps":string[],"focus":[string],"questions":[{"label":string,"question":string,"why":string,"answer":string}],"tips":string[]}\nחשוב: matchScore הוא אחוז התאמה אמיתי ומנומק בין 0 ל-100. focus חייב לכלול 3-5 נושאים קונקרטיים שעליהם המועמד צריך להתמקד בראיון. צור 4-5 שאלות מותאמות, עם תשובת הכנה קצרה לכל שאלה. אל תמציא עובדות שלא מופיעות בקורות החיים. אם מצורף PDF, קרא אותו ישירות ושמור על עברית תקינה.\nתפקיד: ${data.role}\nהגדרת משרה: ${data.jobDescription || 'לא סופקה'}\nקורות חיים שהודבקו: ${data.resume || 'קורות החיים נמצאים בקובץ PDF מצורף.'}`;
-}
-
-function resumeParts(data) {
-  const parts = [{ text: promptFor(data) }];
-  if (data.resumePdf) parts.push({ inlineData: { mimeType: 'application/pdf', data: data.resumePdf } });
-  return parts;
-}
-
-async function analyze(data) {
-  if (!process.env.GEMINI_API_KEY) throw new Error('חסר GEMINI_API_KEY. הוסף/י אותו בקובץ .env והפעל/י מחדש את השרת.');
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
-    body: JSON.stringify({ contents: [{ parts: resumeParts(data) }], generationConfig: { responseMimeType: 'application/json', temperature: 0.55 } })
-  });
-  if (!response.ok) throw new Error(`Gemini returned ${response.status}`);
-  const result = await response.json();
-  return ensureFocus(parseJson(responseText(result)));
-}
-
-async function chat(data) {
-  if (!process.env.GEMINI_API_KEY) throw new Error('חסר GEMINI_API_KEY. הוסף/י אותו בקובץ .env והפעל/י מחדש את השרת.');
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
-    body: JSON.stringify({ contents: [{ parts: [...resumeParts({ ...data, resume: `תפקיד: ${data.role}\n${data.resume || 'קורות החיים נמצאים בקובץ המצורף.'}` }), { text: `הודעת המשתמש: ${data.message}\nענה בעברית, קצר, מעשי ומותאם לתפקיד ולניסיון.` }] }] })
-  });
-  if (!response.ok) throw new Error(`Gemini returned ${response.status}`);
-  const result = await response.json();
-  return { reply: responseText(result) };
-}
-
-function serveStatic(req, res) {
-  const requested = req.url === '/' ? '/index.html' : req.url.split('?')[0];
-  const filePath = path.normalize(path.join(publicDir, requested));
-  if (!filePath.startsWith(publicDir)) return sendJson(res, 403, { error: 'Forbidden' });
-  fs.readFile(filePath, (error, content) => {
-    if (error) return sendJson(res, 404, { error: 'Not found' });
-    const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml' };
-    res.writeHead(200, { 'Content-Type': `${types[path.extname(filePath)] || 'text/plain'}; charset=utf-8` });
-    res.end(content);
-  });
-}
-
-const server = http.createServer((req, res) => {
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, { 'Access-Control-Allow-Origin': allowedOrigin, 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' });
-    return res.end();
-  }
-  if (req.method === 'POST' && req.url === '/api/analyze') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; if (body.length > 10_000_000) req.destroy(); });
-    req.on('end', async () => {
-      try {
-        const data = JSON.parse(body);
-        if (!data.role || (!data.resume && !data.resumePdf)) return sendJson(res, 400, { error: 'Role and resume are required' });
-        sendJson(res, 200, await analyze(data));
-      } catch (error) { sendJson(res, 500, { error: errorMessage(error, 'Analysis failed') }); }
-    });
-    return;
-  }
-  if (req.method === 'POST' && req.url === '/api/chat') {
-    let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', async () => {
-      try { sendJson(res, 200, await chat(JSON.parse(body))); }
-      catch (error) { sendJson(res, 500, { error: errorMessage(error, 'Chat failed') }); }
-    });
-    return;
-  }
-  serveStatic(req, res);
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Origin': allowedOrigin, 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }); return res.end(); }
+  try {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    if (req.method === 'POST' && url.pathname === '/api/auth/login') { const data = await body(req); const expected = data.role === 'admin' ? process.env.ADMIN_PASSWORD : process.env.RECRUITER_PASSWORD; if (!expected || data.password !== expected || !['admin', 'recruiter'].includes(data.role)) return sendJson(res, 401, { error: 'פרטי הכניסה שגויים.' }); const accessToken = token(); sessions.set(accessToken, { role: data.role, createdAt: Date.now() }); return sendJson(res, 200, { accessToken, role: data.role }); }
+    if (req.method === 'GET' && url.pathname === '/api/invites') { const job = readJobs().find(item => item.inviteToken === url.searchParams.get('token')); return job ? sendJson(res, 200, { job: jobView(job) }) : sendJson(res, 404, { error: 'לינק המשרה לא נמצא.' }); }
+    if (req.method === 'GET' && url.pathname === '/api/jobs') { auth(req); return sendJson(res, 200, { jobs: readJobs().map(jobView) }); }
+    if (req.method === 'POST' && url.pathname === '/api/jobs') { auth(req); const data = await body(req); if (!data.title || !data.description) return sendJson(res, 400, { error: 'נדרשים שם משרה והגדרת משרה.' }); const jobs = readJobs(); const job = { id: token().slice(0, 12), title: data.title.trim(), description: data.description.trim(), inviteToken: token(), createdAt: new Date().toISOString() }; jobs.unshift(job); writeJobs(jobs); return sendJson(res, 201, { job: jobView(job) }); }
+    if (req.method === 'POST' && url.pathname.startsWith('/api/jobs/') && url.pathname.endsWith('/invite')) { auth(req); const jobId = url.pathname.split('/')[3]; const jobs = readJobs(); const job = jobs.find(item => item.id === jobId); if (!job) return sendJson(res, 404, { error: 'המשרה לא נמצאה.' }); job.inviteToken = token(); writeJobs(jobs); return sendJson(res, 200, { job: jobView(job) }); }
+    if (req.method === 'POST' && url.pathname === '/api/analyze') { const data = await body(req); if (!data.role || (!data.resume && !data.resumePdf)) return sendJson(res, 400, { error: 'נדרשים תפקיד וקורות חיים.' }); return sendJson(res, 200, await analyze(data)); }
+    if (req.method === 'POST' && url.pathname === '/api/chat') return sendJson(res, 200, await chat(await body(req)));
+    serveStatic(req, res);
+  } catch (error) { sendJson(res, error.message.includes('מורשית') ? 401 : 500, { error: error.message || 'הפעולה נכשלה.' }); }
 });
-
 server.listen(port, '127.0.0.1', () => console.log(`Interview Orbit is running at http://localhost:${port}`));
