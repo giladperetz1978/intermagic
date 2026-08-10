@@ -151,6 +151,52 @@
   <span>FROM JOB BRIEF TO BETTER CONVERSATIONS</span>
 </footer>
 </div>
+<!-- Israeli Standard Accessibility Widget (ת"י 5568 / WCAG 2.1) -->
+<div id="a11yWidget" class="a11y-widget">
+  <button id="a11yToggle" class="a11y-toggle-btn" aria-label="תפריט נגישות (מקש קיצור Alt+9)" title="תפריט נגישות (Alt+9)">
+    <span class="a11y-icon">♿</span>
+    <span class="a11y-label">נגישות</span>
+  </button>
+  <div id="a11yMenu" class="a11y-menu hidden" role="dialog" aria-label="תפריט הנגשה">
+    <div class="a11y-header">
+      <strong>תפריט נגישות</strong>
+      <button id="a11yClose" class="a11y-close-btn" aria-label="סגור תפריט נגישות">✕</button>
+    </div>
+    <div class="a11y-grid">
+      <button class="a11y-btn" id="a11yTextInc" aria-label="הגדל גודל טקסט">🔍+ הגדלת טקסט</button>
+      <button class="a11y-btn" id="a11yTextDec" aria-label="הקטן גודל טקסט">🔍- הקטנת טקסט</button>
+      <button class="a11y-btn" id="a11yContrastHigh" aria-label="ניגודיות כהה">🌓 ניגודיות כהה</button>
+      <button class="a11y-btn" id="a11yContrastInvert" aria-label="ניגודיות הפוכה">🌗 ניגודיות הפוכה</button>
+      <button class="a11y-btn" id="a11yGrayscale" aria-label="גווני אפור">⬛ גווני אפור</button>
+      <button class="a11y-btn" id="a11yLinks" aria-label="הדגשת קישורים">🔗 הדגשת קישורים</button>
+      <button class="a11y-btn" id="a11yReadableFont" aria-label="פונט קריא">🔤 פונט קריא</button>
+      <button class="a11y-btn" id="a11yFocusOutline" aria-label="פוקוס מודגש">🎯 פוקוס מודגש</button>
+      <button class="a11y-btn a11y-reset-btn" id="a11yReset" aria-label="איפוס הגדרות נגישות">🔄 איפוס נגישות</button>
+    </div>
+    <div class="a11y-footer">
+      <button class="a11y-link-btn" id="a11yStatementBtn">📜 הצהרת נגישות תקן 5568</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal הצהרת נגישות -->
+<div id="a11yStatementModal" class="a11y-modal hidden" role="dialog" aria-labelledby="a11yStatementTitle">
+  <div class="a11y-modal-content">
+    <button id="a11yStatementClose" class="a11y-close-btn" aria-label="סגור">✕</button>
+    <h3 id="a11yStatementTitle">הצהרת נגישות לפי תקן ישראלי ת"י 5568</h3>
+    <p>אנו פועלים רבות להנגשת האתר והאפליקציה עבור אנשים עם מוגבלויות, מתוך אמונה כי לכל אדם מגיעה הזדמנות שווה וגישה חופשית למידע ולטכנולוגיה.</p>
+    <h4>התאמות הנגישות שבוצעו:</h4>
+    <ul>
+      <li>תמיכה מלאה בניווט מקלדת (TAB, Shift+TAB, Enter).</li>
+      <li>מקש קיצור דרך <strong>Alt + 9</strong> לפתיחה מהירה של תפריט הנגישות.</li>
+      <li>שינוי גודל פונט, ניגודיות גבוהה, גווני אפור ופונט קריא.</li>
+      <li>תמיכה בהקראת קול וקוראי מסך (תגיות ARIA מותאמות).</li>
+      <li>התאמה מלאה למסכי סמארטפון וטאבלט.</li>
+    </ul>
+    <p>אם נתקלתם בבעיית נגישות, אנו נשמח לשפר. ניתן ליצור קשר במייל רכז/ת הנגישות.</p>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>

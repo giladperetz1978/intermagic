@@ -196,9 +196,115 @@ function setupFieldDictation(btnSelector, targetInputSelector) {
 setupFieldDictation('#adminDictateBtn', '#jobDescription');
 setupFieldDictation('#recruiterDictateBtn', '#recruiterDescription');
 
+function setupAccessibility() {
+  const toggleBtn = $('#a11yToggle');
+  const menu = $('#a11yMenu');
+  const closeBtn = $('#a11yClose');
+  const statementBtn = $('#a11yStatementBtn');
+  const statementModal = $('#a11yStatementModal');
+  const statementClose = $('#a11yStatementClose');
+  const resetBtn = $('#a11yReset');
+
+  if (!toggleBtn || !menu) return;
+
+  const toggleMenu = () => menu.classList.toggle('hidden');
+  toggleBtn.addEventListener('click', toggleMenu);
+  if (closeBtn) closeBtn.addEventListener('click', () => menu.classList.add('hidden'));
+
+  if (statementBtn && statementModal) {
+    statementBtn.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      statementModal.classList.remove('hidden');
+    });
+  }
+  if (statementClose && statementModal) {
+    statementClose.addEventListener('click', () => statementModal.classList.add('hidden'));
+  }
+
+  // Israeli Accessibility standard shortcut Alt + 9
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey && (e.key === '9' || e.keyCode === 57 || e.code === 'Digit9')) {
+      e.preventDefault();
+      toggleMenu();
+    }
+  });
+
+  const a11yClasses = [
+    'a11y-font-lg', 'a11y-font-xl', 'a11y-font-sm',
+    'a11y-high-contrast', 'a11y-grayscale', 'a11y-invert',
+    'a11y-links', 'a11y-readable-font', 'a11y-focus-outline'
+  ];
+
+  function saveA11yState() {
+    const active = a11yClasses.filter(cls => document.body.classList.contains(cls));
+    localStorage.setItem('interview_orbit_a11y', JSON.stringify(active));
+  }
+
+  function loadA11yState() {
+    try {
+      const active = JSON.parse(localStorage.getItem('interview_orbit_a11y') || '[]');
+      active.forEach(cls => document.body.classList.add(cls));
+      updateActiveButtons();
+    } catch (err) { console.error(err); }
+  }
+
+  function updateActiveButtons() {
+    $('#a11yContrastHigh')?.classList.toggle('active', document.body.classList.contains('a11y-high-contrast'));
+    $('#a11yContrastInvert')?.classList.toggle('active', document.body.classList.contains('a11y-invert'));
+    $('#a11yGrayscale')?.classList.toggle('active', document.body.classList.contains('a11y-grayscale'));
+    $('#a11yLinks')?.classList.toggle('active', document.body.classList.contains('a11y-links'));
+    $('#a11yReadableFont')?.classList.toggle('active', document.body.classList.contains('a11y-readable-font'));
+    $('#a11yFocusOutline')?.classList.toggle('active', document.body.classList.contains('a11y-focus-outline'));
+  }
+
+  function toggleClass(cls) {
+    document.body.classList.toggle(cls);
+    saveA11yState();
+    updateActiveButtons();
+  }
+
+  $('#a11yTextInc')?.addEventListener('click', () => {
+    if (document.body.classList.contains('a11y-font-lg')) {
+      document.body.classList.remove('a11y-font-lg');
+      document.body.classList.add('a11y-font-xl');
+    } else {
+      document.body.classList.remove('a11y-font-sm', 'a11y-font-xl');
+      document.body.classList.add('a11y-font-lg');
+    }
+    saveA11yState();
+  });
+
+  $('#a11yTextDec')?.addEventListener('click', () => {
+    if (document.body.classList.contains('a11y-font-lg') || document.body.classList.contains('a11y-font-xl')) {
+      document.body.classList.remove('a11y-font-lg', 'a11y-font-xl');
+    } else {
+      document.body.classList.add('a11y-font-sm');
+    }
+    saveA11yState();
+  });
+
+  $('#a11yContrastHigh')?.addEventListener('click', () => toggleClass('a11y-high-contrast'));
+  $('#a11yContrastInvert')?.addEventListener('click', () => toggleClass('a11y-invert'));
+  $('#a11yGrayscale')?.addEventListener('click', () => toggleClass('a11y-grayscale'));
+  $('#a11yLinks')?.addEventListener('click', () => toggleClass('a11y-links'));
+  $('#a11yReadableFont')?.addEventListener('click', () => toggleClass('a11y-readable-font'));
+  $('#a11yFocusOutline')?.addEventListener('click', () => toggleClass('a11y-focus-outline'));
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      a11yClasses.forEach(cls => document.body.classList.remove(cls));
+      localStorage.removeItem('interview_orbit_a11y');
+      updateActiveButtons();
+    });
+  }
+
+  loadA11yState();
+}
+
+setupAccessibility();
+
 function bindFile(input, target, onRead) { $(input).addEventListener('change', () => { try { setUpload($(input).files[0], target, onRead); } catch (error) { target.hint.textContent = error.message; } }); }
 bindFile('#candidateFile', { title: $('#candidateUploadTitle'), hint: $('#candidateUploadHint') }, (text, pdf) => { $('#candidateResume').value = text; candidatePdf = pdf; });
 bindFile('#recruiterFile', { title: $('#recruiterUploadTitle'), hint: $('#recruiterUploadHint') }, (text, pdf) => { $('#recruiterResume').value = text; recruiterPdf = pdf; });
 $('#createInviteButton').addEventListener('click', createInvite);
 const invite = new URLSearchParams(location.search).get('invite'); if (invite) loadInvite(invite); else showView('landingView');
-
