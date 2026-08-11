@@ -948,22 +948,22 @@ select {
 
 .report-score-low .report-shell,
 .report-score-low .report-content {
-  background-color: rgba(232, 82, 82, 0.14);
+  background-color: rgba(232, 82, 82, 0.126);
 }
 
 .report-score-medium .report-shell,
 .report-score-medium .report-content {
-  background-color: rgba(246, 200, 95, 0.14);
+  background-color: rgba(246, 200, 95, 0.126);
 }
 
 .report-score-good .report-shell,
 .report-score-good .report-content {
-  background-color: rgba(111, 190, 224, 0.14);
+  background-color: rgba(111, 190, 224, 0.126);
 }
 
 .report-score-high .report-shell,
 .report-score-high .report-content {
-  background-color: rgba(103, 190, 119, 0.14);
+  background-color: rgba(103, 190, 119, 0.126);
 }
 
 .report-actions {
