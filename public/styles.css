@@ -1055,6 +1055,79 @@ select {
   padding: 18px;
 }
 
+.report-page .brand,
+.report-page .topbar-meta,
+.report-page footer,
+.report-page .report-actions {
+  font-size: 14px !important;
+}
+
+.report-page .report-actions,
+.report-page .score-caption,
+.report-page .result-summary,
+.report-page .chat-title,
+.report-page .chat-messages,
+.report-page .mic-status {
+  font-weight: 700 !important;
+}
+
+.report-page .report-print {
+  font-size: 18px !important;
+}
+
+.report-page .report-heading span,
+.report-page .score-caption,
+.report-page .mini-panel h3,
+.report-page .tips-block h3,
+.report-page .focus-block h3 {
+  font-size: 16px !important;
+}
+
+.report-page .report-heading h1 {
+  font-size: 38px !important;
+}
+
+.report-page .score-caption strong {
+  font-size: 30px !important;
+}
+
+.report-page .score-ring b {
+  font-size: 26px !important;
+}
+
+.report-page .result-summary,
+.report-page .mini-panel ul,
+.report-page .tips-block p,
+.report-page .focus-block ul,
+.report-page .chat-messages,
+.report-page .chat-form input {
+  font-size: 18px !important;
+}
+
+.report-page .question-block .question-meta {
+  font-size: 15px !important;
+}
+
+.report-page .question-block h3 {
+  font-size: 19px !important;
+}
+
+.report-page .question-block p {
+  font-size: 17px !important;
+}
+
+.report-page .chat-title {
+  font-size: 15px !important;
+}
+
+.report-page .chat-title span:last-child {
+  font-size: 13px !important;
+}
+
+.report-page .mic-status {
+  font-size: 14px !important;
+}
+
 @media print {
   .report-page .topbar,
   .report-page footer,
