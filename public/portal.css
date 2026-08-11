@@ -80,6 +80,20 @@
   padding: 36px 0;
 }
 
+.back-button {
+  border: 0;
+  background: transparent;
+  color: var(--teal);
+  padding: 4px 0;
+  margin-bottom: 22px;
+  font: 700 14px 'Heebo', sans-serif;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  color: var(--coral);
+}
+
 .auth-panel {
   max-width: 560px;
   padding: 42px;
@@ -135,6 +149,40 @@
 .small-button:hover {
   background: var(--ink);
   color: var(--cream);
+}
+
+.new-job-panel {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.new-job-panel .small-button {
+  margin-top: 8px;
+}
+
+.recruiter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.recruiter-row strong {
+  font-size: 16px;
+}
+
+.recruiter-row small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-recruiters {
+  max-width: 800px;
+  margin-top: 30px;
 }
 
 .saved-job {

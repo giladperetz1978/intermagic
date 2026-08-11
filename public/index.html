@@ -39,18 +39,23 @@
     <button class="portal-card admin-choice" data-view="admin">
       <span class="portal-index">03 / ADMIN</span>
       <strong>מצב אדמין</strong>
-      <small>הכנסת משרות זמינות לצוות הגיוס</small>
+      <small>יצירת חשבונות לצוות הגיוס</small>
       <span class="portal-arrow">←</span>
     </button>
   </div>
 </section>
 <section id="loginView" class="workflow-view hidden">
+  <button class="back-button" data-back="landingView" type="button">← חזרה</button>
   <div class="section-label"><span class="label-number">A</span><span>כניסה מאובטחת</span><span class="label-line"></span><span class="label-status">RECRUITING</span></div>
   <div class="auth-panel">
     <p class="eyebrow">ACCESS / <span id="loginRoleLabel">RECRUITER</span></p>
     <h2>נכנסים לסביבת<br><em>הגיוס.</em></h2>
     <form id="loginForm">
       <input type="hidden" id="loginRole" />
+      <div id="recruiterUsernameField">
+        <label class="field-label" for="username">שם משתמש</label>
+        <input id="username" type="text" autocomplete="username" placeholder="הזן/י שם משתמש" />
+      </div>
       <label class="field-label" for="password">סיסמה</label>
       <input id="password" type="password" required autocomplete="current-password" placeholder="הזן/י סיסמה" />
       <button class="analyze-button" type="submit"><span>כניסה</span><span class="button-arrow">←</span></button>
@@ -59,6 +64,7 @@
   </div>
 </section>
 <section id="candidateView" class="workflow-view hidden">
+  <button class="back-button" data-back="landingView" type="button">← חזרה</button>
   <div id="candidateJobBanner" class="job-banner"></div>
   <div class="section-label"><span class="label-number">C</span><span>סימולציית ראיון</span><span class="label-line"></span><span class="label-status accent">INTERVIEW MODE</span></div>
   <div class="workspace-grid">
@@ -88,10 +94,21 @@
   </div>
 </section>
 <section id="recruiterView" class="workflow-view hidden">
+  <button class="back-button" data-back="landingView" type="button">← חזרה</button>
   <div class="section-label"><span class="label-number">R</span><span>סביבת מנהל מגייס</span><span class="label-line"></span><span class="label-status accent">RECRUITER DESK</span></div>
   <div class="dashboard-grid">
     <aside class="saved-jobs">
       <div class="dash-heading"><h2>משרות שמורות</h2><button id="newJobButton" class="small-button">+ חדשה</button></div>
+      <div id="newJobPanel" class="new-job-panel hidden">
+        <form id="recruiterJobForm">
+          <label class="field-label" for="recruiterJobTitle">שם המשרה</label>
+          <input id="recruiterJobTitle" required placeholder="למשל: Senior Product Designer" />
+          <label class="field-label" for="recruiterJobDescription">הגדרת המשרה</label>
+          <textarea id="recruiterJobDescription" rows="5" required placeholder="תחומי אחריות, דרישות, צוות..."></textarea>
+          <button class="small-button" type="submit">שמירת משרה</button>
+          <p id="recruiterJobMessage" class="form-error"></p>
+        </form>
+      </div>
       <div id="jobsList"></div>
     </aside>
     <div class="input-column">
@@ -128,22 +145,23 @@
   </div>
 </section>
 <section id="adminView" class="workflow-view hidden">
-  <div class="section-label"><span class="label-number">A</span><span>ניהול משרות</span><span class="label-line"></span><span class="label-status accent">ADMIN</span></div>
+  <button class="back-button" data-back="landingView" type="button">← חזרה</button>
+  <div class="section-label"><span class="label-number">A</span><span>ניהול מנהלים מגייסים</span><span class="label-line"></span><span class="label-status accent">ADMIN</span></div>
   <div class="auth-panel admin-panel">
-    <h2>מוסיפים משרה<br><em>לספרייה.</em></h2>
-    <form id="jobForm">
-      <label class="field-label" for="jobTitle">שם המשרה</label>
-      <input id="jobTitle" required placeholder="למשל: Senior Product Designer" />
-      <div class="field-label-row">
-        <label class="field-label" for="jobDescription">הגדרת המשרה</label>
-        <button type="button" id="adminDictateBtn" class="dictate-btn" title="הכתבת הגדרת משרה בקול">🎙️ הכתבה בקול</button>
-      </div>
-      <textarea id="jobDescription" rows="9" required placeholder="תחומי אחריות, דרישות, צוות והקשר..."></textarea>
-      <button class="analyze-button" type="submit"><span>שמירת המשרה</span><span class="button-arrow">←</span></button>
-      <p id="jobMessage" class="form-error"></p>
+    <h2>מוסיפים מנהל/ת<br><em>מגייס/ת.</em></h2>
+    <form id="recruiterFormAdmin">
+      <label class="field-label" for="adminUsername">שם משתמש</label>
+      <input id="adminUsername" required autocomplete="off" placeholder="למשל: dana" />
+      <label class="field-label" for="adminRecruiterPassword">סיסמה</label>
+      <input id="adminRecruiterPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="לפחות 6 תווים" />
+      <button class="analyze-button" type="submit"><span>הוספת מנהל/ת מגייס/ת</span><span class="button-arrow">←</span></button>
+      <p id="recruiterMessage" class="form-error"></p>
     </form>
   </div>
-  <div id="adminJobs" class="admin-jobs"></div>
+  <div class="admin-recruiters">
+    <div class="dash-heading"><h2>מנהלים מגייסים</h2></div>
+    <div id="recruitersList"></div>
+  </div>
 </section>
 </main>
 <footer>
