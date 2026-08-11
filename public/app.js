@@ -304,7 +304,8 @@ function setupAccessibility() {
 setupAccessibility();
 
 function bindFile(input, target, onRead) { $(input).addEventListener('change', () => { try { setUpload($(input).files[0], target, onRead); } catch (error) { target.hint.textContent = error.message; } }); }
-bindFile('#candidateFile', { title: $('#candidateUploadTitle'), hint: $('#candidateUploadHint') }, (text, pdf) => { $('#candidateResume').value = text; candidatePdf = pdf; });
+bindFile('#candidateFile', { title: $('#candidateUploadTitle'), hint: $('#candidateUploadHint') }, (text, pdf) => { $('#candidateResume').value = text; candidatePdf = pdf; $('#candidateResume').setCustomValidity(''); });
 bindFile('#recruiterFile', { title: $('#recruiterUploadTitle'), hint: $('#recruiterUploadHint') }, (text, pdf) => { $('#recruiterResume').value = text; recruiterPdf = pdf; });
 $('#createInviteButton').addEventListener('click', createInvite);
+$('#candidateResume').addEventListener('input', () => $('#candidateResume').setCustomValidity(''));
 const invite = new URLSearchParams(location.search).get('invite'); if (invite) loadInvite(invite); else showView('landingView');
