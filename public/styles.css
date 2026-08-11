@@ -1071,6 +1071,33 @@ select {
   font-weight: 700 !important;
 }
 
+.report-page .report-actions,
+.report-page .score-caption,
+.report-page .result-summary,
+.report-page .chat-title,
+.report-page .chat-messages,
+.report-page .mic-status,
+.report-page .report-heading span {
+  color: #3f4a4d !important;
+  font-weight: 800 !important;
+}
+
+.report-page .report-heading h1,
+.report-page .score-caption strong,
+.report-page .score-ring b,
+.report-page .mini-panel h3,
+.report-page .mini-panel li,
+.report-page .tips-block h3,
+.report-page .tips-block p,
+.report-page .focus-block h3,
+.report-page .focus-block li,
+.report-page .question-block h3,
+.report-page .question-block p,
+.report-page .chat-form input {
+  color: #101719 !important;
+  font-weight: 800 !important;
+}
+
 .report-page .report-print {
   font-size: 18px !important;
 }
