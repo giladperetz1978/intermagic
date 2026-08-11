@@ -13,6 +13,7 @@
   --teal: #4c9490;
   --yellow: #f6c85f;
   --shadow: 0 18px 45px rgba(34, 46, 44, 0.08);
+  --hand-font: 'Noto Rashi Hebrew', 'Kalam', cursive;
 }
 
 * {
@@ -25,7 +26,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Manrope', 'Heebo', sans-serif;
+  font-family: var(--hand-font);
   line-height: 1.6;
 }
 
@@ -913,6 +914,72 @@ body.a11y-focus-outline *:focus {
 .report-page .report-shell {
   max-width: 1600px;
   width: 100%;
+  background-color: #fff;
+  background-image: linear-gradient(to left, transparent 0 72px, rgba(232, 104, 74, 0.34) 73px, transparent 74px), repeating-linear-gradient(to bottom, transparent 0 37px, rgba(76, 148, 144, 0.23) 38px, transparent 39px);
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--hand-font) !important;
+}
+
+.report-page {
+  background: #fff;
+}
+
+.report-page .report-content {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.82);
+  background-image: linear-gradient(to left, transparent 0 72px, rgba(232, 104, 74, 0.28) 73px, transparent 74px), repeating-linear-gradient(to bottom, transparent 0 37px, rgba(76, 148, 144, 0.22) 38px, transparent 39px);
+  border-color: rgba(76, 148, 144, 0.35);
+  box-shadow: 0 10px 24px rgba(34, 46, 44, 0.08);
+}
+
+.report-page .report-content::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.18));
+}
+
+.writing-pencil {
+  position: fixed;
+  z-index: 10;
+  top: 132px;
+  right: clamp(24px, 8vw, 150px);
+  color: var(--ink);
+  font: 42px var(--hand-font) !important;
+  transform: rotate(-18deg);
+  animation: pencil-write 2.8s ease-in-out forwards;
+  pointer-events: none;
+}
+
+.report-page .report-content .results > * {
+  opacity: 0;
+  animation: notebook-write 0.34s ease-out forwards;
+}
+
+.report-page .report-content .results > *:nth-child(1) { animation-delay: 0.18s; }
+.report-page .report-content .results > *:nth-child(2) { animation-delay: 0.42s; }
+.report-page .report-content .results > *:nth-child(3) { animation-delay: 0.66s; }
+.report-page .report-content .results > *:nth-child(4) { animation-delay: 0.90s; }
+.report-page .report-content .results > *:nth-child(5) { animation-delay: 1.14s; }
+.report-page .report-content .results > *:nth-child(6) { animation-delay: 1.38s; }
+
+@keyframes notebook-write {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pencil-write {
+  0% { opacity: 0; transform: translate(12px, -12px) rotate(-18deg); }
+  12%, 88% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-18px, 68vh) rotate(-18deg); }
 }
 
 .report-actions {
