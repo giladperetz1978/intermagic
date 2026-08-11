@@ -908,3 +908,126 @@ body.a11y-focus-outline *:focus {
     width: 290px;
   }
 }
+
+/* Full-page recruiter analysis report */
+.report-page .report-shell {
+  max-width: 1600px;
+  width: 100%;
+}
+
+.report-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--muted);
+  font: 10px 'DM Mono', monospace;
+  letter-spacing: 1px;
+}
+
+.report-print {
+  border: 1px solid var(--coral);
+  background: transparent;
+  color: var(--coral);
+  padding: 10px 16px;
+  font: 700 14px 'Heebo', sans-serif;
+  cursor: pointer;
+}
+
+.report-print:hover {
+  background: var(--coral);
+  color: white;
+}
+
+.report-heading {
+  border-bottom: 1px solid var(--line);
+  padding: 38px 0 28px;
+}
+
+.report-heading span {
+  color: var(--coral);
+  font: 12px 'DM Mono', monospace;
+  letter-spacing: 1px;
+}
+
+.report-heading h1 {
+  font-size: 34px;
+  margin-top: 8px;
+}
+
+.report-content {
+  width: 100%;
+  margin: 32px 0 48px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.report-content .results {
+  padding: 40px 5.5vw;
+}
+
+.report-content .score-caption {
+  font-size: 12px;
+}
+
+.report-content .score-caption strong {
+  font-size: 26px;
+}
+
+.report-content .result-summary {
+  font-size: 14px;
+}
+
+.report-content .mini-panel h3,
+.report-content .tips-block h3 {
+  font-size: 12px;
+}
+
+.report-content .mini-panel ul,
+.report-content .tips-block p {
+  font-size: 13px;
+}
+
+.report-content .question-block .question-meta {
+  font-size: 11px;
+}
+
+.report-content .question-block h3 {
+  font-size: 15px;
+}
+
+.report-content .question-block p {
+  font-size: 13px;
+}
+
+.report-content .tips-block {
+  padding: 18px;
+}
+
+@media print {
+  .report-page .topbar,
+  .report-page footer,
+  .report-page .report-actions,
+  .report-page .chat-panel {
+    display: none !important;
+  }
+
+  .report-page,
+  .report-page .app-shell {
+    background: var(--paper) !important;
+  }
+
+  .report-page .app-shell {
+    max-width: none;
+    padding: 0;
+  }
+
+  .report-heading {
+    padding-top: 0;
+  }
+
+  .report-content {
+    margin: 20px 0 0;
+    box-shadow: none;
+  }
+}
