@@ -30,7 +30,18 @@ function passwordMatches(password, record) { return crypto.timingSafeEqual(Buffe
 function body(req) { return new Promise((resolve, reject) => { let raw = ''; req.on('data', chunk => { raw += chunk; if (raw.length > 12_000_000) reject(new Error('הבקשה גדולה מדי.')); }); req.on('end', () => { try { resolve(JSON.parse(raw || '{}')); } catch { reject(new Error('בקשה לא תקינה.')); } }); req.on('error', reject); }); }
 function auth(req, roles = ['recruiter', 'admin']) { const value = req.headers.authorization || ''; const session = sessions.get(value.replace(/^Bearer\s+/i, '')); if (!session || !roles.includes(session.role)) throw new Error('נדרשת כניסה מורשית.'); return session; }
 function jobView(job) { return { id: job.id, title: job.title, description: job.description, createdAt: job.createdAt, inviteToken: job.inviteToken, inviteUrl: `${process.env.PUBLIC_URL || ''}/?invite=${job.inviteToken}` }; }
-async function gemini(parts, generationConfig = {}) { if (!process.env.GEMINI_API_KEY) throw new Error('חסר GEMINI_API_KEY.'); const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY }, body: JSON.stringify({ contents: [{ parts }], generationConfig }) }); if (!response.ok) throw new Error(`Gemini returned ${response.status}`); return response.json(); }
+async function gemini(parts, generationConfig = {}) {
+  if (!process.env.GEMINI_API_KEY) throw new Error('חסר GEMINI_API_KEY.');
+  const retryableStatuses = new Set([429, 500, 502, 503, 504]);
+  const requestBody = JSON.stringify({ contents: [{ parts }], generationConfig });
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY }, body: requestBody });
+    if (response.ok) return response.json();
+    if (!retryableStatuses.has(response.status) || attempt === 2) throw new Error(`Gemini returned ${response.status}`);
+    await new Promise(resolve => setTimeout(resolve, 800 * (attempt + 1)));
+  }
+  throw new Error('Gemini request failed.');
+}
 function recruiterPrompt(data) { return `אתה יועץ גיוס. נתח את קורות החיים מול המשרה עבור מנהל מגייס, לא עבור המועמד. החזר JSON בלבד בעברית: {"matchScore":number,"headline":string,"summary":string,"strengths":string[],"gaps":string[],"focus":[string],"questions":[{"label":string,"question":string,"why":string,"answer":string}],"tips":string[]}. היה ענייני, ציין סיכונים ופערים, ואל תמציא עובדות.\nמשרה: ${data.role}\nהגדרת משרה: ${data.jobDescription || 'לא סופקה'}\nקורות חיים: ${data.resume || 'מצורף PDF'}`; }
 async function analyze(data) { const parts = [{ text: recruiterPrompt(data) }]; if (data.resumePdf) parts.push({ inlineData: { mimeType: 'application/pdf', data: data.resumePdf } }); return parseJson(responseText(await gemini(parts, { responseMimeType: 'application/json', temperature: 0.45 }))); }
 async function chat(data) { if (!data?.role || !data?.message) throw new Error('נדרש תפקיד והודעה.'); const prompt = data.mode === 'candidate' ? `אתה מראיין מקצועי בסימולציית ראיון לתפקיד ${data.role}. שאל שאלה אחת בכל פעם, המתן לתשובת המרואיין, ותן משוב קצר ומעשי בעברית. התבסס על המשרה ועל קורות החיים, אך אל תמציא עובדות.\nמשרה: ${data.jobDescription || ''}\nקורות חיים: ${data.resume || 'מצורף PDF'}\nהודעת המרואיין: ${data.message}` : `אתה מאמן גיוס. ענה בעברית בקצרה ובאופן מעשי למגייס לגבי המועמד לתפקיד ${data.role}.\nקורות חיים: ${data.resume || 'מצורף PDF'}\nשאלת המגייס: ${data.message}`; const parts = [{ text: prompt }]; if (data.resumePdf) parts.push({ inlineData: { mimeType: 'application/pdf', data: data.resumePdf } }); return { reply: responseText(await gemini(parts, { temperature: 0.55 })) }; }
