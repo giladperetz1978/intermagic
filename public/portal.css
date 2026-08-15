@@ -14,14 +14,14 @@
 .portal-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 42px;
+  gap: 18px;
+  margin-top: 48px;
 }
 
 .portal-card {
   position: relative;
-  min-height: 210px;
-  padding: 26px;
+  min-height: 214px;
+  padding: 30px;
   text-align: right;
   border: 1px solid var(--line);
   background: var(--cream);
@@ -32,7 +32,7 @@
   align-items: flex-start;
   transition: 0.2s;
 
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .portal-card:hover {
@@ -42,7 +42,7 @@
 }
 
 .portal-card.candidate-choice {
-  background: var(--ink);
+  background: var(--navy);
   color: var(--cream);
 }
 
@@ -57,7 +57,8 @@
 }
 
 .portal-card strong {
-  font-size: 25px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 24px;
   margin-top: auto;
 }
 
@@ -71,8 +72,8 @@
 .portal-arrow {
   font-size: 25px;
   position: absolute;
-  bottom: 24px;
-  left: 26px;
+  bottom: 26px;
+  left: 30px;
 }
 
 /* Workflow Auth */
