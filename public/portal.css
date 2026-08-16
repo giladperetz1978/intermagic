@@ -68,7 +68,7 @@
 .portal-card.recruiter-choice {
   overflow: hidden;
   color: var(--ink);
-  background-image: url('good_recruitment_cover_art_v2.png');
+  background-image: url('welcome-amarel.png');
   background-color: #f6b65f;
   background-position: center center;
   background-repeat: no-repeat;
@@ -76,7 +76,7 @@
 }
 
 .portal-card.recruiter-choice:hover {
-  background-image: url('good_recruitment_cover_art_v2.png');
+  background-image: url('welcome-amarel.png');
 }
 
 .portal-card.admin-choice {
