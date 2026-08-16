@@ -69,15 +69,6 @@
   background: var(--yellow);
 }
 
-.portal-card.usage-choice {
-  background: var(--cream);
-  border-color: var(--ink);
-}
-
-.portal-card.usage-choice:hover {
-  background: var(--white);
-}
-
 .portal-index {
   font: 10px 'DM Mono', monospace;
   letter-spacing: 1px;
@@ -104,71 +95,44 @@
   left: 30px;
 }
 
-.usage-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: rgba(32, 36, 42, 0.42);
-}
-
-.usage-modal-content {
-  position: relative;
-  width: min(620px, 100%);
-  padding: 42px;
+.usage-panel {
+  min-height: 214px;
+  padding: 30px;
   background: var(--cream);
-  border: 1px solid var(--ink);
-  box-shadow: 0 24px 60px rgba(32, 36, 42, 0.2);
+  border: 1px solid var(--line);
+  text-align: right;
 }
 
-.usage-modal-content h2 {
+.usage-panel > strong {
+  display: block;
+  margin: 18px 0 20px;
   font-family: 'Rubik', sans-serif;
-  font-size: 32px;
-  margin: 10px 0 28px;
-}
-
-.usage-close-button {
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
+  font-size: 24px;
 }
 
 .usage-steps {
   display: grid;
-  gap: 18px;
-}
-
-.usage-steps > div {
-  display: grid;
-  grid-template-columns: 34px 1fr;
-  gap: 14px;
-  align-items: start;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-}
-
-.usage-steps span {
-  color: var(--coral);
-  font: 11px 'Rubik', sans-serif;
+  gap: 11px;
 }
 
 .usage-steps p {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: start;
   margin: 0;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 1.55;
 }
 
-.usage-steps strong {
-  color: var(--ink);
+.usage-steps span {
+  display: block;
+}
+
+.usage-steps b {
+  color: var(--coral);
+  font: 11px 'Rubik', sans-serif;
 }
 
 /* Workflow Auth */
@@ -420,11 +384,8 @@
     padding: 5px 9px;
   }
 
-  .usage-modal-content {
-    padding: 36px 24px 28px;
-  }
-
-  .usage-modal-content h2 {
-    font-size: 27px;
+  .usage-panel {
+    min-height: auto;
+    padding: 24px;
   }
 }

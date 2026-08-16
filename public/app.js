@@ -322,25 +322,6 @@ function setupAccessibility() {
 
 setupAccessibility();
 
-function setupUsageGuide() {
-  const button = $('#usageButton');
-  const modal = $('#usageModal');
-  const closeButton = $('#usageCloseButton');
-  if (!button || !modal) return;
-
-  const close = () => modal.classList.add('hidden');
-  button.addEventListener('click', () => modal.classList.remove('hidden'));
-  closeButton?.addEventListener('click', close);
-  modal.addEventListener('click', event => {
-    if (event.target === modal) close();
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') close();
-  });
-}
-
-setupUsageGuide();
-
 function bindFile(input, target, onRead) { $(input).addEventListener('change', () => { try { setUpload($(input).files[0], target, onRead); } catch (error) { target.hint.textContent = error.message; } }); }
 bindFile('#candidateFile', { title: $('#candidateUploadTitle'), hint: $('#candidateUploadHint') }, (text, pdf) => { $('#candidateResume').value = text; candidatePdf = pdf; $('#candidateResume').setCustomValidity(''); });
 bindFile('#recruiterFile', { title: $('#recruiterUploadTitle'), hint: $('#recruiterUploadHint') }, (text, pdf) => { $('#recruiterResume').value = text; recruiterPdf = pdf; });
