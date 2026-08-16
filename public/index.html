@@ -14,6 +14,7 @@
 <body>
 <div class="app-shell">
 <header class="topbar">
+  <button class="admin-top-button" data-view="admin" type="button">אדמין</button>
   <a class="brand" href="/"><span class="brand-mark"><span></span><span></span><span></span></span><span>INTERVIEW <b>ORBIT</b></span></a>
   <div class="topbar-meta"><span class="live-dot"></span><span>INTERVIEW OPERATIONS</span><span class="divider"></span><span id="sessionLabel">WELCOME</span></div>
   <button class="icon-button hidden" id="logoutButton" title="יציאה" aria-label="יציאה">↪</button>
@@ -25,16 +26,16 @@
   <p>סביבת עבודה מתקדמת עבור מנהל מגייס, צוות הגיוס והמועמד.</p>
   <div class="portal-grid">
     <button class="portal-card recruiter-choice" data-view="recruiter">
-      <span class="portal-index">01 / RECRUITING</span>
-      <strong>מנהל/ת מגייס/ת</strong>
+      <span class="portal-index">01 / START</span>
+      <strong>כניסה ראשית</strong>
       <small>בחירת משרה, ניתוח מועמד וצ׳אט עם המאמן</small>
       <span class="portal-arrow">←</span>
     </button>
-    <button class="portal-card admin-choice" data-view="admin">
-      <span class="portal-index">02 / ADMIN</span>
-      <strong>מצב אדמין</strong>
-      <small>יצירת חשבונות לצוות הגיוס</small>
-      <span class="portal-arrow">←</span>
+    <button class="portal-card usage-choice" id="usageButton" type="button">
+      <span class="portal-index">02 / GUIDE</span>
+      <strong>הוראות שימוש</strong>
+      <small>איך מתחילים, מנהלים משרה ומפעילים ראיון</small>
+      <span class="portal-arrow">↗</span>
     </button>
   </div>
 </section>
@@ -158,6 +159,18 @@
   </div>
 </section>
 </main>
+<div id="usageModal" class="usage-modal hidden" role="dialog" aria-modal="true" aria-labelledby="usageModalTitle">
+  <div class="usage-modal-content">
+    <button id="usageCloseButton" class="usage-close-button" type="button" aria-label="סגירת הוראות שימוש">×</button>
+    <p class="eyebrow">GUIDE / START HERE</p>
+    <h2 id="usageModalTitle">איך משתמשים באתר?</h2>
+    <div class="usage-steps">
+      <div><span>01</span><p><strong>כניסה ראשית</strong><br>נכנסים עם פרטי המגייס/ת ובוחרים משרה קיימת או יוצרים חדשה.</p></div>
+      <div><span>02</span><p><strong>הזמנת מועמד/ת</strong><br>בוחרים משרה, יוצרים לינק אישי ושולחים אותו למועמד/ת.</p></div>
+      <div><span>03</span><p><strong>ניתוח וראיון</strong><br>מעלים קורות חיים, מקבלים ניתוח וממשיכים לשיחה עם המאמן.</p></div>
+    </div>
+  </div>
+</div>
 <footer>
   <span>INTERVIEW ORBIT / RECRUITING WORKSPACE</span>
   <span>FROM JOB BRIEF TO BETTER CONVERSATIONS</span>
