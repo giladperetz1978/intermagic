@@ -36,8 +36,9 @@
       <strong>הוראות שימוש</strong>
       <div class="usage-steps">
         <p><b>01</b><span><strong>נכנסים</strong> עם פרטי המגייס/ת ובוחרים משרה קיימת או יוצרים חדשה.</span></p>
-        <p><b>02</b><span><strong>מזמינים</strong> מועמד/ת באמצעות לינק אישי שנוצר מתוך המשרה.</span></p>
-        <p><b>03</b><span><strong>מנתחים</strong> קורות חיים וממשיכים לשיחה עם מאמן הגיוס.</span></p>
+        <p><b>02</b><span>מעלים קורות חיים.</span></p>
+        <p><b>03</b><span>לוחצים על ניתוח קורות החיים.</span></p>
+        <p><b>04</b><span>שולחים לינק למועמד במידה והוא מתאים לפרופיל המשרה, לשיקול מנהל/ת הגיוס.</span></p>
       </div>
     </div>
   </div>
@@ -118,8 +119,6 @@
           <button type="button" id="recruiterDictateBtn" class="dictate-btn" title="הכתבת הגדרת משרה בקול">🎙️ הכתבה בקול</button>
         </div>
         <textarea id="recruiterDescription" rows="5" placeholder="תחומי אחריות, דרישות, צוות..." required></textarea>
-        <button id="createInviteButton" class="invite-button" type="button" disabled><span>יצירת לינק ושליחה למועמד</span><span class="button-arrow">←</span></button>
-        <p id="inviteMessage" class="invite-message"></p>
         <div class="section-label resume-label"><span class="label-number">C</span><span>מועמד לבדיקה</span><span class="label-line"></span></div>
         <label class="upload-zone" for="recruiterFile">
           <span class="upload-orbit"><span>↑</span></span>
@@ -129,6 +128,8 @@
         </label>
         <textarea id="recruiterResume" rows="7" placeholder="או הדבק/י קורות חיים..."></textarea>
         <button class="analyze-button" type="submit"><span>ניתוח עבור מנהל מגייס</span><span class="button-arrow">←</span></button>
+        <button id="createInviteButton" class="invite-button" type="button" disabled><span>שליחת לינק למועמד</span><span class="button-arrow">←</span></button>
+        <p id="inviteMessage" class="invite-message"></p>
       </form>
     </div>
     <div class="insight-column">
